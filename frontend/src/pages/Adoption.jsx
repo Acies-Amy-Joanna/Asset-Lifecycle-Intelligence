@@ -4,9 +4,7 @@ import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, PieChart, Pie,
 } from "recharts";
 import { Users, TrendingUp, Layers, Gauge, ArrowRight } from "lucide-react";
-import {
-  portfolio, portfolioUsageTrend, portfolioFeatures, adoptionStageDistribution, anomalies, customers,
-} from "@/data/dataset";
+import { useData } from "@/context/DataContext";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -22,6 +20,7 @@ import { CHART_TOOLTIP_STYLE } from "@/lib/intel";
 export default function Adoption() {
   const navigate = useNavigate();
   const [metric, setMetric] = useState("usageVolume");
+  const { portfolio, portfolioUsageTrend, portfolioFeatures, adoptionStageDistribution, anomalies, customers } = useData();
 
   const totalActive = customers.reduce((s, c) => s + c.activeUsers, 0);
   const avgUsageGrowth = Math.round(customers.reduce((s, c) => s + c.usageGrowth, 0) / customers.length * 10) / 10;

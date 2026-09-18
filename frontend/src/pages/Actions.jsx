@@ -4,8 +4,7 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from "recharts";
 import { CheckSquare, AlertTriangle, TrendingUp, ListTodo, Flame } from "lucide-react";
-import { actions as allActions } from "@/data/dataset";
-import { useActionStore, effStatus, effOwner } from "@/context/actionStore";
+import { useData, effStatus, effOwner } from "@/context/DataContext";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -25,7 +24,7 @@ export default function Actions() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [active, setActive] = useState(null);
-  const { overrides, setStatus, setOwner } = useActionStore();
+  const { actions: allActions, overrides, updateAction } = useData();
 
   useEffect(() => { const t = params.get("type"); if (t) setTypeFilter(t); }, [params]);
 
@@ -129,13 +128,13 @@ export default function Actions() {
             { key: "reason", header: "Reason", render: (r) => <span className="text-slate-500 text-xs">{r.reason}</span> },
             { key: "impact", header: "Impact", sortable: true, align: "right", render: (r) => <span className={cn("font-semibold", r.impactType === "opportunity" ? "text-indigo-600" : "text-rose-600")}>{fmtCurrency(r.impact)}</span> },
             { key: "owner", header: "Owner", render: (r) => (
-              <Input value={effOwner(r, overrides)} onChange={(e) => setOwner(r.id, e.target.value)} onClick={(e) => e.stopPropagation()} placeholder="Assign…" data-testid={`action-owner-input-${r.id}`} className="h-8 w-28 text-xs" />
+              <Input value={effOwner(r, overrides)} onChange={(e) => updateAction(r.id, { owner: e.target.value })} onClick={(e) => e.stopPropagation()} placeholder="Assign…" data-testid={`action-owner-input-${r.id}`} className="h-8 w-28 text-xs" />
             ) },
             { key: "status", header: "Status", render: (r) => {
               const s = effStatus(r, overrides);
               return (
                 <button type="button" data-testid={`action-status-toggle-${r.id}`}
-                  onClick={(e) => { e.stopPropagation(); setStatus(r.id, s === "Open" ? "Completed" : "Open"); }}
+                  onClick={(e) => { e.stopPropagation(); updateAction(r.id, { status: s === "Open" ? "Completed" : "Open" }); }}
                   className={cn("text-xs font-medium px-2.5 py-1 rounded-full border transition-colors", s === "Open" ? "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100" : "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100")}>
                   {s}
                 </button>

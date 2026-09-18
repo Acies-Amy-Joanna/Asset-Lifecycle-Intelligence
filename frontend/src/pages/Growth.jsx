@@ -4,7 +4,8 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
 } from "recharts";
 import { TrendingUp, Target, Gauge, Sparkles, ArrowRight, Lightbulb } from "lucide-react";
-import { portfolio, opportunities, expansionReadinessDistribution, customers, OPPORTUNITY_TYPES } from "@/data/dataset";
+import { useData } from "@/context/DataContext";
+import { OPPORTUNITY_TYPES } from "@/lib/constants";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -20,6 +21,7 @@ import { CHART_TOOLTIP_STYLE } from "@/lib/intel";
 export default function Growth() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const { portfolio, opportunities, expansionReadinessDistribution, customers } = useData();
   const [typeFilter, setTypeFilter] = useState(params.get("type") || "all");
   const [selected, setSelected] = useState(null);
 

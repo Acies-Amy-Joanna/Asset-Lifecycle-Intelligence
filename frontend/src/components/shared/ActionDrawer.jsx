@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useActionStore, effStatus, effOwner } from "@/context/actionStore";
+import { useData, effStatus, effOwner } from "@/context/DataContext";
 import { PriorityBadge, TypeBadge } from "./Badges";
 import { EvidenceList } from "./EvidenceList";
 import { fmtCurrencyFull } from "@/lib/format";
@@ -19,7 +19,7 @@ const relatedRoute = (a) => {
 // Right-side detail drawer: Customer → Action → Why → Related → Evidence → Impact → Next Step
 export const ActionDrawer = ({ action, open, onOpenChange }) => {
   const navigate = useNavigate();
-  const { overrides, setStatus, setOwner } = useActionStore();
+  const { overrides, updateAction } = useData();
   if (!action) return null;
   const s = effStatus(action, overrides);
   const owner = effOwner(action, overrides);
@@ -58,7 +58,7 @@ export const ActionDrawer = ({ action, open, onOpenChange }) => {
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Status</div>
               <button
                 type="button"
-                onClick={() => setStatus(action.id, s === "Open" ? "Completed" : "Open")}
+                onClick={() => updateAction(action.id, { status: s === "Open" ? "Completed" : "Open" })}
                 data-testid="drawer-status-toggle"
                 className={`text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors ${s === "Open" ? "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100" : "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100"}`}
               >
@@ -67,7 +67,7 @@ export const ActionDrawer = ({ action, open, onOpenChange }) => {
             </div>
             <div className="flex-1">
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Owner</div>
-              <Input value={owner} onChange={(e) => setOwner(action.id, e.target.value)} placeholder="Assign owner…" data-testid="drawer-owner-input" className="h-9" />
+              <Input value={owner} onChange={(e) => updateAction(action.id, { owner: e.target.value })} placeholder="Assign owner…" data-testid="drawer-owner-input" className="h-9" />
             </div>
           </div>
 

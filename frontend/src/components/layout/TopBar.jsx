@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, Search, Bell, ChevronRight } from "lucide-react";
 import { customers, insights } from "@/data/dataset";
+import { useData } from "@/context/DataContext";
 import {
   Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
 } from "@/components/ui/command";
@@ -24,6 +25,7 @@ const TITLES = {
 export const TopBar = ({ onMenu }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { customers, insights } = useData();
   const [searchOpen, setSearchOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
 

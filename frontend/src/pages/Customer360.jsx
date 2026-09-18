@@ -7,7 +7,7 @@ import {
   Activity, Users, Gauge, TrendingUp, Layers, CalendarClock, DollarSign, AlertTriangle,
   ChevronDown, ArrowRight, ArrowUpRight, ArrowDownRight, Minus,
 } from "lucide-react";
-import { customers, getCustomer } from "@/data/dataset";
+import { useData } from "@/context/DataContext";
 import { useApp } from "@/context/AppContext";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -28,6 +28,7 @@ export default function Customer360() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { selectedCustomerId, setSelectedCustomerId } = useApp();
+  const { customers, getCustomer } = useData();
   const [evidenceOpen, setEvidenceOpen] = useState(true);
   const [activeAction, setActiveAction] = useState(null);
 

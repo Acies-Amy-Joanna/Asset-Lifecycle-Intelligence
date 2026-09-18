@@ -4,7 +4,8 @@ import {
   ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Cell, ReferenceLine,
 } from "recharts";
 import { Search, X, Users, Activity, AlertTriangle, DollarSign, Target, TrendingUp } from "lucide-react";
-import { customers, SEGMENTS, HEALTH_STATUSES, PRODUCTS } from "@/data/dataset";
+import { useData } from "@/context/DataContext";
+import { SEGMENTS, HEALTH_STATUSES, PRODUCTS } from "@/lib/constants";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -25,6 +26,7 @@ const ALL = "all";
 export default function Customers() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const { customers } = useData();
   const [search, setSearch] = useState("");
   const [product, setProduct] = useState(ALL);
   const [segment, setSegment] = useState(ALL);

@@ -1,10 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { customers } from "@/data/dataset";
 
 const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
-  const [selectedCustomerId, setSelectedCustomerId] = useState(customers[0].id);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   return (
     <AppContext.Provider value={{ selectedCustomerId, setSelectedCustomerId }}>
       {children}

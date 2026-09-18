@@ -7,10 +7,7 @@ import {
 import {
   Users, AlertTriangle, DollarSign, Target, TrendingUp, CheckSquare, ArrowRight,
 } from "lucide-react";
-import {
-  portfolio, customers, insights, actions,
-} from "@/data/dataset";
-import { useActionStore, effStatus } from "@/context/actionStore";
+import { useData, effStatus } from "@/context/DataContext";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -25,7 +22,7 @@ import { primaryRiskDriver, CHART_TOOLTIP_STYLE } from "@/lib/intel";
 export default function Overview() {
   const navigate = useNavigate();
   const [activeAction, setActiveAction] = useState(null);
-  const { overrides } = useActionStore();
+  const { portfolio, customers, insights, actions, overrides } = useData();
   const pending = actions.filter((a) => effStatus(a, overrides) === "Open").length;
 
   const topRisk = customers.filter((c) => c.hasRisk).sort((a, b) => b.revenueAtRisk - a.revenueAtRisk).slice(0, 6);

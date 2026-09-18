@@ -7,6 +7,7 @@ import {
   AlertTriangle, DollarSign, Activity, CalendarClock, Ticket, ArrowRight, ArrowUpRight, ArrowDownRight, Minus,
 } from "lucide-react";
 import { portfolio, customers, insights } from "@/data/dataset";
+import { useData } from "@/context/DataContext";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -20,6 +21,7 @@ import { CHART_TOOLTIP_STYLE, primaryRiskDriver } from "@/lib/intel";
 
 export default function HealthRenewal() {
   const navigate = useNavigate();
+  const { portfolio, customers, insights } = useData();
 
   const riskCustomers = customers.filter((c) => c.hasRisk).sort((a, b) => b.revenueAtRisk - a.revenueAtRisk);
   const avgResolution = Math.round(customers.reduce((s, c) => s + c.support.avgResolutionDays, 0) / customers.length * 10) / 10;
