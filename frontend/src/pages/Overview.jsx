@@ -10,6 +10,7 @@ import {
 import {
   portfolio, customers, insights, actions,
 } from "@/data/dataset";
+import { useActionStore, effStatus } from "@/context/actionStore";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
@@ -24,11 +25,13 @@ import { primaryRiskDriver, CHART_TOOLTIP_STYLE } from "@/lib/intel";
 export default function Overview() {
   const navigate = useNavigate();
   const [activeAction, setActiveAction] = useState(null);
+  const { overrides } = useActionStore();
+  const pending = actions.filter((a) => effStatus(a, overrides) === "Open").length;
 
   const topRisk = customers.filter((c) => c.hasRisk).sort((a, b) => b.revenueAtRisk - a.revenueAtRisk).slice(0, 6);
   const highValueRisky = customers.filter((c) => c.hasRisk).sort((a, b) => b.arr - a.arr).slice(0, 5);
   const topInsights = insights.slice(0, 5);
-  const priorityActions = actions.filter((a) => a.status === "Open").slice(0, 6);
+  const priorityActions = actions.filter((a) => effStatus(a, overrides) === "Open").slice(0, 6);
 
   return (
     <div className="space-y-6" data-testid="overview-page">
@@ -45,7 +48,7 @@ export default function Overview() {
           icon={Target} tone="opportunity" description="open expansion signals" onClick={() => navigate("/growth")} />
         <KpiCard testId="kpi-expansion-potential" label="Expansion Potential" value={fmtCurrency(portfolio.totalExpansionPotential)}
           icon={TrendingUp} tone="opportunity" description="estimated value" onClick={() => navigate("/growth")} />
-        <KpiCard testId="kpi-actions-pending" label="AI Actions Pending" value={portfolio.aiActionsPending}
+        <KpiCard testId="kpi-actions-pending" label="AI Actions Pending" value={pending}
           icon={CheckSquare} tone="warning" description="recommended next steps" onClick={() => navigate("/actions")} />
       </KpiGrid>
 

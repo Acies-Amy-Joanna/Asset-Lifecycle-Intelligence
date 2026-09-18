@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronsUpDown, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { exportCsv } from "@/lib/csv";
 import {
   Pagination, PaginationContent, PaginationItem,
 } from "@/components/ui/pagination";
@@ -9,6 +10,7 @@ import {
 // columns: [{ key, header, render?(row), sortValue?(row), sortable?, className, align }]
 export const DataTable = ({
   rows, columns, pageSize = 10, onRowClick, rowTestId, testId, emptyLabel = "No records match your filters.",
+  exportable = false, exportFilename = "export.csv", exportColumns = [],
 }) => {
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState("asc");
@@ -37,6 +39,18 @@ export const DataTable = ({
 
   return (
     <div data-testid={testId}>
+      {exportable && (
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={() => exportCsv(exportFilename, exportColumns, sorted)}
+            data-testid="export-csv-button"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50 transition-colors"
+          >
+            <Download className="h-3.5 w-3.5" /> Export CSV
+          </button>
+        </div>
+      )}
       <div className="overflow-x-auto scrollbar-thin rounded-lg border border-slate-200">
         <table className="w-full text-left text-sm border-collapse min-w-[640px]">
           <thead>

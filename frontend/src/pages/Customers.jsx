@@ -147,6 +147,24 @@ export default function Customers() {
           testId="customers-table"
           rows={filtered}
           pageSize={10}
+          exportable
+          exportFilename="ali-customers.csv"
+          exportColumns={[
+            { header: "Customer", value: (r) => r.name },
+            { header: "ID", value: (r) => r.id },
+            { header: "Segment", value: (r) => r.segment },
+            { header: "Product", value: (r) => r.product },
+            { header: "Health Score", value: (r) => r.healthScore },
+            { header: "Health Status", value: (r) => r.healthStatus },
+            { header: "Active Users", value: (r) => r.activeUsers },
+            { header: "License Util %", value: (r) => r.licenseUtilization },
+            { header: "Usage Growth %", value: (r) => r.usageGrowth },
+            { header: "Feature Adoption %", value: (r) => r.featureAdoption },
+            { header: "Days to Renewal", value: (r) => r.daysToRenewal },
+            { header: "Revenue at Risk", value: (r) => r.revenueAtRisk },
+            { header: "Opportunity Value", value: (r) => r.opportunityValue },
+            { header: "Priority", value: (r) => r.riskPriority },
+          ]}
           onRowClick={(r) => navigate(`/customer360/${r.id}`)}
           rowTestId={(r) => `customer-row-${r.id}`}
           columns={[

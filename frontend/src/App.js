@@ -2,6 +2,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { AppProvider } from "@/context/AppContext";
+import { ActionStoreProvider } from "@/context/actionStore";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Overview from "@/pages/Overview";
 import Customers from "@/pages/Customers";
@@ -14,6 +15,7 @@ import Actions from "@/pages/Actions";
 function App() {
   return (
     <AppProvider>
+      <ActionStoreProvider>
       <BrowserRouter>
         <Routes>
           <Route element={<AppLayout />}>
@@ -29,6 +31,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors />
+      </ActionStoreProvider>
     </AppProvider>
   );
 }

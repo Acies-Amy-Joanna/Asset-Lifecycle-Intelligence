@@ -5,12 +5,14 @@ import {
 } from "recharts";
 import { CheckSquare, AlertTriangle, TrendingUp, ListTodo, Flame } from "lucide-react";
 import { actions as allActions } from "@/data/dataset";
+import { useActionStore, effStatus, effOwner } from "@/context/actionStore";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { KpiGrid } from "@/components/shared/Layout";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { DataTable } from "@/components/shared/DataTable";
 import { ActionDrawer } from "@/components/shared/ActionDrawer";
 import { PriorityBadge, TypeBadge } from "@/components/shared/Badges";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { fmtCurrency } from "@/lib/format";
 import { CHART_TOOLTIP_STYLE } from "@/lib/intel";
@@ -23,17 +25,18 @@ export default function Actions() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [active, setActive] = useState(null);
+  const { overrides, setStatus, setOwner } = useActionStore();
 
   useEffect(() => { const t = params.get("type"); if (t) setTypeFilter(t); }, [params]);
 
   const filtered = useMemo(() => allActions.filter((a) => {
     if (typeFilter !== "all" && a.type !== typeFilter) return false;
-    if (statusFilter !== "all" && a.status !== statusFilter) return false;
+    if (statusFilter !== "all" && effStatus(a, overrides) !== statusFilter) return false;
     if (priorityFilter !== "all" && a.priority !== priorityFilter) return false;
     return true;
-  }), [typeFilter, statusFilter, priorityFilter]);
+  }), [typeFilter, statusFilter, priorityFilter, overrides]);
 
-  const open = allActions.filter((a) => a.status === "Open");
+  const open = allActions.filter((a) => effStatus(a, overrides) === "Open");
   const highPriority = open.filter((a) => a.priority === "High").length;
   const riskActions = open.filter((a) => a.type === "Risk" || a.type === "Renewal" || a.type === "Adoption").length;
   const oppActions = open.filter((a) => ["Upsell", "Cross-sell", "License Expansion", "Whitespace"].includes(a.type)).length;
@@ -105,6 +108,18 @@ export default function Actions() {
           </div>
         </div>
         <DataTable testId="actions-table" rows={filtered} pageSize={12}
+          exportable
+          exportFilename="ali-actions.csv"
+          exportColumns={[
+            { header: "Priority", value: (r) => r.priority },
+            { header: "Customer", value: (r) => r.customerName },
+            { header: "Action", value: (r) => r.action },
+            { header: "Type", value: (r) => r.type },
+            { header: "Reason", value: (r) => r.reason },
+            { header: "Impact", value: (r) => r.impact },
+            { header: "Owner", value: (r) => effOwner(r, overrides) },
+            { header: "Status", value: (r) => effStatus(r, overrides) },
+          ]}
           onRowClick={(r) => setActive(r)} rowTestId={(r) => `action-row-${r.id}`}
           columns={[
             { key: "priority", header: "Priority", render: (r) => <PriorityBadge priority={r.priority} /> },
@@ -113,7 +128,19 @@ export default function Actions() {
             { key: "type", header: "Type", render: (r) => <TypeBadge type={r.type} /> },
             { key: "reason", header: "Reason", render: (r) => <span className="text-slate-500 text-xs">{r.reason}</span> },
             { key: "impact", header: "Impact", sortable: true, align: "right", render: (r) => <span className={cn("font-semibold", r.impactType === "opportunity" ? "text-indigo-600" : "text-rose-600")}>{fmtCurrency(r.impact)}</span> },
-            { key: "status", header: "Status", render: (r) => <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", r.status === "Open" ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-400")}>{r.status}</span> },
+            { key: "owner", header: "Owner", render: (r) => (
+              <Input value={effOwner(r, overrides)} onChange={(e) => setOwner(r.id, e.target.value)} onClick={(e) => e.stopPropagation()} placeholder="Assign…" data-testid={`action-owner-input-${r.id}`} className="h-8 w-28 text-xs" />
+            ) },
+            { key: "status", header: "Status", render: (r) => {
+              const s = effStatus(r, overrides);
+              return (
+                <button type="button" data-testid={`action-status-toggle-${r.id}`}
+                  onClick={(e) => { e.stopPropagation(); setStatus(r.id, s === "Open" ? "Completed" : "Open"); }}
+                  className={cn("text-xs font-medium px-2.5 py-1 rounded-full border transition-colors", s === "Open" ? "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100" : "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100")}>
+                  {s}
+                </button>
+              );
+            } },
           ]} />
       </SectionCard>
 

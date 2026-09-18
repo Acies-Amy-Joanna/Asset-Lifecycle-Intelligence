@@ -148,6 +148,19 @@ export default function HealthRenewal() {
 
       <SectionCard title="Renewal Risk" subtitle="Click a customer to open Customer 360" testId="hr-risk-table-card">
         <DataTable testId="renewal-risk-table" rows={riskCustomers} pageSize={10}
+          exportable
+          exportFilename="ali-renewal-risk.csv"
+          exportColumns={[
+            { header: "Customer", value: (r) => r.name },
+            { header: "Renewal Date", value: (r) => fmtDate(r.renewalDate) },
+            { header: "Days to Renewal", value: (r) => r.daysToRenewal },
+            { header: "ARR", value: (r) => r.arr },
+            { header: "Health", value: (r) => r.healthStatus },
+            { header: "Renewal Risk", value: (r) => r.renewalRisk },
+            { header: "Primary Driver", value: (r) => primaryRiskDriver(r) },
+            { header: "Revenue at Risk", value: (r) => r.revenueAtRisk },
+            { header: "Priority", value: (r) => r.riskPriority },
+          ]}
           onRowClick={(r) => navigate(`/customer360/${r.id}`)} rowTestId={(r) => `renewal-risk-row-${r.id}`}
           columns={[
             { key: "name", header: "Customer", sortable: true, render: (r) => <span className="font-medium text-slate-900">{r.name}</span> },
