@@ -43,13 +43,13 @@ Build a polished, responsive B2B SaaS customer intelligence platform ("ALI") on 
 - P1: Additional Customer 360 depth (stakeholder matrix, per-product breakdown)
 - P2: CSV export, more anomaly types, benchmark configuration, dark mode
 
-## Implemented (2026-06-18) — Iteration 2
-- Action status toggle (Open↔Completed) + free-text Owner, persisted per-device via localStorage (`/app/frontend/src/context/actionStore.js`); controls live in both the Actions table and the action detail drawer.
-- Actions counters + Overview "AI Actions Pending" reflect overrides live.
-- One-click CSV export on Customers, Renewal Risk (Health & Renewal), and Actions tables — exports the current filtered/searched/sorted result set (`/app/frontend/src/lib/csv.js`, `DataTable` `exportable` prop).
-- PENDING: Part 1 (swap sample dataset for user's Excel) — blocked on the Excel file attachment.
+## Implemented (2026-06-18) — Iteration 2 (data swap done)
+- **Part 1 — Real dataset**: The uploaded workbook (ALI_Udemy_MVP_Mock_Data.xlsx) is now the app's data. Aggregated via `/app/scripts/xl_build.py` into `/app/frontend/src/data/ali_data.json` (10 customers, 1,900 users, 111K dated usage events, 8 features, licenses, renewals, commercial figures, support tickets). `dataset.js` derives ALL intelligence (health/status/trend/drivers, usage & active-user growth from 12-month series, feature adoption from last-3-vs-prev-3-month distinct adopters, license utilization, opportunities, readiness, priorities, recommended actions, anomalies) from these raw facts. Commercial dollar figures (ARR, revenue-at-risk, upsell/cross-sell/expansion potential) are read from the file; qualitative labels are computed. REFERENCE_DATE = 2025-12-31 so 2026 renewals bucket correctly.
+- **Part 2 — Action status + owner** (localStorage): toggle Open↔Completed and free-text Owner in Actions table + drawer; counters and Overview "AI Actions Pending" update live.
+- **Part 3 — CSV export** on Customers, Renewal Risk, Actions (honors current filters/search/sort).
+- Verified: clean compile; Overview/Customers/Customer 360/Adoption render real data with correct derivations (e.g. Acme At Risk, −24.2% usage).
 
 ## Next Tasks
-1. Part 1: Ingest user's Excel as the dataset (replace samples); keep deriving all intelligence from raw facts. Blocked on file attachment + confirmation of monthly-history/per-feature detail vs single snapshot.
-2. Backend API for customers/portfolio/insights/actions with derived-intelligence computation
-3. Optional auth layer + server-side persistence of action status/owner
+1. Backend API (FastAPI + MongoDB) to serve the dataset and compute derivations server-side; move action status/owner to shared storage
+2. Optional auth layer
+3. PDF export
